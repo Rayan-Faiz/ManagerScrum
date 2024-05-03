@@ -29,12 +29,6 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 @EnableMethodSecurity(securedEnabled = true)
 public class SecurityConfig {
 
-    private final AuthenticationProvider authenticationProvider;
-
-    public SecurityConfig(AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
-    }
-
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
@@ -45,23 +39,6 @@ public class SecurityConfig {
                     authorize.requestMatchers("/api/users/**").permitAll();
                     authorize.requestMatchers("/dashboard/**").permitAll();
                 })
-                /*.formLogin(
-                form -> form
-                .loginPage("/api/users/login")
-                        .failureUrl("/api/users/login?error")
-                        .defaultSuccessUrl("/login/**")
-                        .successHandler(new CustomAuthenticationSuccessHandler())
-                        .permitAll())
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-                        .invalidSessionUrl("/login")
-                        .sessionFixation().migrateSession()
-                        .maximumSessions(1)
-                        .expiredUrl("/login?expired=true"))
-                .authenticationProvider(authenticationProvider);
-                .logout(logout -> logout
-                        .logoutUrl("/api/users/logout")
-                        .logoutSuccessUrl("/login?logout=true"))*/
                 .sessionManagement(session -> session.sessionCreationPolicy(STATELESS));
         return http.build();
     }

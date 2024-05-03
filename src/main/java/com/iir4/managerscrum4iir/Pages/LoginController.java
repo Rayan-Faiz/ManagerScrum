@@ -26,7 +26,7 @@ public class LoginController {
     private PasswordEncoder passwordEncoder;
 
     @PostMapping("/login")
-    public String loginUser(UserDTO loginRequest, RedirectAttributes redirectAttributes, Model model, HttpSession session) {
+    public String loginUser(UserDTO loginRequest, Model model, HttpSession session) {
 
         Users user = usersRepository.findByEmail(loginRequest.getEmail());
 

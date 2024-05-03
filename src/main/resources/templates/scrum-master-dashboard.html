@@ -10,7 +10,35 @@
 <div class="container mt-5">
     <h2>Welcome to the Scrum Master Dashboard</h2>
     <p>This is where master can view their tasks and collaborate with the team.</p>
-    <!-- Add more content specific to member dashboard here -->
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Tasks</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="sprint : ${sprints}">
+            <td th:text="${sprint.id}"></td>
+            <td th:text="${sprint.name}"></td>
+            <td th:text="${#dates.format(sprint.startDate, 'dd/MM/yyyy')}"></td>
+            <td th:text="${#dates.format(sprint.endDate, 'dd/MM/yyyy')}"></td>
+            <td>
+                <ul>
+                    <li th:each="task : ${sprint.tasks}" th:text="${task.name}"></li>
+                </ul>
+                <!-- Form for adding tasks -->
+                <form th:action="@{/addTask/{sprintId}(sprintId=${sprint.id})}" th:object="${newTask}" method="post">
+                    <input type="text" th:field="*{name}" placeholder="New Task Name"/>
+                    <button type="submit">Add Task</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
 </div>
 </body>
 </html>

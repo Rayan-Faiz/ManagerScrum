@@ -9,7 +9,8 @@
 <body>
 <div class="container mt-5">
     <h2>User Login</h2>
-    <form method="post" action="/api/users/login">
+    <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+    <form method="post" th:action="@{/api/users/login}">
         <div class="form-group">
             <label for="email">Email:</label>
             <input type="email" class="form-control" id="email" name="email" required>
@@ -19,6 +20,7 @@
             <input type="password" class="form-control" id="password" name="password" required>
         </div>
         <button type="submit" class="btn btn-primary">Login</button>
+        <a href="/api/users/register" class="btn btn-link">New here? Register</a>
     </form>
 </div>
 </body>
