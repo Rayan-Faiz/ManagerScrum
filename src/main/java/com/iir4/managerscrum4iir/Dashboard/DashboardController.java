@@ -47,7 +47,15 @@ public class DashboardController {
     }
 
     @GetMapping("/scrum-master-dashboard")
-    public String scrumMasterDashboard() {
+    public String scrumMasterDashboard(Model model) {
+        List<Users> users = usersRepository.findAll();
+        List<Sprint> sprints = sprintRepository.findAll();
+        List<Task> tasks = taskRepository.findAll();
+        List<UserStory> userStories = userStoryRepository.findAll();
+        model.addAttribute("users", users);
+        model.addAttribute("userStories", userStories);
+        model.addAttribute("sprints", sprints);
+        model.addAttribute("tasks", tasks);
         return "scrum-master-dashboard";
     }
 

@@ -1,44 +1,298 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Member Dashboard</title>
+    <title>Scrum Master Dashboard</title>
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Include jQuery and Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
 <div class="container mt-5">
     <h2>Welcome to the Scrum Master Dashboard</h2>
-    <p>This is where master can view their tasks and collaborate with the team.</p>
-    <table>
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Tasks</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="sprint : ${sprints}">
-            <td th:text="${sprint.id}"></td>
-            <td th:text="${sprint.name}"></td>
-            <td th:text="${#dates.format(sprint.startDate, 'dd/MM/yyyy')}"></td>
-            <td th:text="${#dates.format(sprint.endDate, 'dd/MM/yyyy')}"></td>
-            <td>
-                <ul>
-                    <li th:each="task : ${sprint.tasks}" th:text="${task.name}"></li>
-                </ul>
-                <!-- Form for adding tasks -->
-                <form th:action="@{/addTask/{sprintId}(sprintId=${sprint.id})}" th:object="${newTask}" method="post">
-                    <input type="text" th:field="*{name}" placeholder="New Task Name"/>
-                    <button type="submit">Add Task</button>
-                </form>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <p>This is where Scrum Masters can manage tasks, sprints, and users.</p>
+
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active" id="backlog-tab" data-toggle="tab" href="#backlog" role="tab" aria-controls="backlog" aria-selected="true">Backlog</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="sprints-tab" data-toggle="tab" href="#sprints" role="tab" aria-controls="sprints" aria-selected="false">Sprints</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" id="users-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Users</a>
+        </li>
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content" id="myTabContent">
+        <!-- Backlog Tab -->
+        <div class="tab-pane fade show active" id="backlog" role="tabpanel" aria-labelledby="backlog-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="userStory : ${userStories}">
+                    <td th:text="${userStory.id}"></td>
+                    <td th:text="${userStory.title}"></td>
+                    <td th:text="${userStory.description}"></td>
+                    <td>
+                        <button class="btn btn-primary edit-user-story-btn"
+                                data-id="${userStory.id}"
+                                data-title="${userStory.title}"
+                                data-description="${userStory.description}"
+                                data-toggle="modal"
+                                data-target="#userStoryModal">Edit</button>
+                        <button class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-success" data-toggle="modal" data-target="#userStoryModal">Add User Story</button>
+        </div>
+
+        <!-- Sprints Tab -->
+        <div class="tab-pane fade" id="sprints" role="tabpanel" aria-labelledby="sprints-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                    <th>Tasks</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="sprint : ${sprints}">
+                    <td th:text="${sprint.id}"></td>
+                    <td th:text="${sprint.name}"></td>
+                    <td th:text="${#dates.format(sprint.startDate, 'dd/MM/yyyy')}"></td>
+                    <td th:text="${#dates.format(sprint.endDate, 'dd/MM/yyyy')}"></td>
+                    <td>
+                        <ul>
+                            <li th:each="task : ${sprint.tasks}">
+                                <strong th:text="${task.name}"></strong>: <span th:text="${task.description}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <button class="btn btn-primary edit-sprint-btn"
+                                data-id="${sprint.id}"
+                                data-name="${sprint.name}"
+                                data-start-date="${#dates.format(sprint.startDate, 'dd/MM/yyyy')}"
+                                data-end-date="${#dates.format(sprint.endDate, 'dd/MM/yyyy')}">Edit</button>
+                        <button class="btn btn-danger">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-success" data-toggle="modal" data-target="#sprintModal">Add Sprint</button>
+        </div>
+
+
+        <!-- Users Tab -->
+        <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.getId()}"></td>
+                    <td th:text="${user.name}"></td>
+                    <td th:text="${user.roles}"></td>
+                    <td>
+                        <button class="btn btn-danger delete-user-btn" data-user-id="${user.id}">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
+<!-- JavaScript for deleting users -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        $('.delete-user-btn').click(function () {
+            var userId = $(this).data('user-id');
+            if (confirm('Are you sure you want to delete this user?')) {
+                deleteUser(userId);
+            }
+        });
+
+        function deleteUser(userId) {
+            $.ajax({
+                url: '/users/' + userId + '/delete',
+                type: 'DELETE',
+                success: function (data) {
+                    // Remove the corresponding row from the table
+                    $('tr[data-user-id="' + userId + '"]').remove();
+                    alert('User deleted successfully!');
+                },
+                error: function () {
+                    alert('Failed to delete user.');
+                }
+            });
+        }
+    });
+    /*]]>*/
+</script>
+
+<!-- User Story Modal -->
+<div class="modal fade" id="userStoryModal" tabindex="-1" role="dialog" aria-labelledby="userStoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="userStoryModalLabel">User Story</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="userStoryForm">
+                    <input type="hidden" id="userStoryId" name="id">
+                    <div class="form-group">
+                        <label for="userStoryTitle">Title</label>
+                        <input type="text" class="form-control" id="userStoryTitle" name="title">
+                    </div>
+                    <div class="form-group">
+                        <label for="userStoryDescription">Description</label>
+                        <textarea class="form-control" id="userStoryDescription" name="description"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveUserStoryBtn">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        // Handle click event on Edit button for user stories
+        $('.edit-user-story-btn').click(function () {
+            var id = $(this).data('id');
+            // Make AJAX request to fetch user story data
+            $.get('/userStory/' + id + '/edit', function(data) {
+                // Populate modal with fetched data
+                $('#userStoryId').val(data.id);
+                $('#userStoryTitle').val(data.title);
+                $('#userStoryDescription').val(data.description);
+                // Show the modal
+                $('#userStoryModal').modal('show');
+            });
+        });
+    });
+    /*]]>*/
+</script>
+
+<!-- Sprint Modal -->
+<div class="modal fade" id="sprintModal" tabindex="-1" role="dialog" aria-labelledby="addSprintModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addSprintModalLabel">Add Sprint</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form id="addSprintForm" action="/sprints/add" method="post">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="sprintName">Name</label>
+                        <input type="text" class="form-control" id="sprintName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="startDate">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    </div>
+                    <div class="form-group" id="tasksContainer">
+                        <label>Tasks</label>
+                        <div class="task-input">
+                            <input type="text" class="form-control task-name" name="taskNames[]" placeholder="Task Name" required>
+                            <input type="text" class="form-control task-description" name="taskDescriptions[]" placeholder="Task Description" required>
+                            <button type="button" class="btn btn-sm btn-danger remove-task">Remove</button>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-sm btn-primary" id="addTask">Add Task</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Sprint</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    // Edit button click event listener for sprints
+    $('.edit-sprint-btn').click(function() {
+        var id = $(this).data('id');
+        var name = $(this).data('name');
+        var startDate = $(this).data('start-date');
+        var endDate = $(this).data('end-date');
+
+        // Populate modal fields with data from the row
+        $('#editSprintId').val(id);
+        $('#editSprintName').val(name);
+        $('#editSprintStartDate').val(startDate);
+        $('#editSprintEndDate').val(endDate);
+
+        // Show the modal
+        $('#editSprintModal').modal('show');
+    });
+
+    $(document).ready(function () {
+        // Add task input field
+        $("#addTask").click(function () {
+            var taskInput = '<div class="task-input"><input type="text" class="form-control task-name" name="taskNames[]" placeholder="Task Name" required><input type="text" class="form-control task-description" name="taskDescriptions[]" placeholder="Task Description" required><button type="button" class="btn btn-sm btn-danger remove-task">Remove</button></div>';
+            $("#tasksContainer").append(taskInput);
+        });
+
+        // Remove task input field
+        $(document).on("click", ".remove-task", function () {
+            $(this).closest(".task-input").remove();
+        });
+    });
+    /*]]>*/
+</script>
+
+<!-- JavaScript for tab switching -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function(){
+        $('#myTab a').click(function (e) {
+            e.preventDefault();
+            $(this).tab('show');
+        });
+    });
+    /*]]>*/
+</script>
 </body>
 </html>

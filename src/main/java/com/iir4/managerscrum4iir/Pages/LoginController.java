@@ -25,27 +25,27 @@ public class LoginController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @PostMapping("/login")
-    public String loginUser(UserDTO loginRequest, Model model, HttpSession session) {
-
-        Users user = usersRepository.findByEmail(loginRequest.getEmail());
-
-        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            session.setAttribute("user", user);
-
-            for (Roles role : user.getRoles()) {
-                if (role.getName().equals("Member")) {
-                    return "redirect:/dashboard/member-dashboard";
-                } else if (role.getName().equals("Master")) {
-                    return "redirect:/dashboard/scrum-master-dashboard";
-                }
-            }
-            return "register";
-        } else {
-            model.addAttribute("error", "Invalid email or password");
-            return "error";
-        }
-    }
+//    @PostMapping("/login")
+//    public String loginUser(UserDTO loginRequest, Model model, HttpSession session) {
+//
+//        Users user = usersRepository.findByEmail(loginRequest.getEmail());
+//
+//        if (user != null && passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
+//            session.setAttribute("user", user);
+//
+//            for (Roles role : user.getRoles()) {
+//                if (role.getName().equals("Member")) {
+//                    return "redirect:/dashboard/member-dashboard";
+//                } else if (role.getName().equals("Master")) {
+//                    return "redirect:/dashboard/scrum-master-dashboard";
+//                }
+//            }
+//            return "register";
+//        } else {
+//            model.addAttribute("error", "Invalid email or password");
+//            return "error";
+//        }
+//    }
 
     @GetMapping("/login")
     public String showLoginForm(Model model, RedirectAttributes redirectAttributes) {
