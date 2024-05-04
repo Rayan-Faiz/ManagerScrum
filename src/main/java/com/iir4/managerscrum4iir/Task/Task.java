@@ -2,8 +2,12 @@ package com.iir4.managerscrum4iir.Task;
 
 import com.iir4.managerscrum4iir.Sprint.Sprint;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "tasks")
 public class Task {
 

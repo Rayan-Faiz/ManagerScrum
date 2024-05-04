@@ -27,4 +27,9 @@ public class Roles {
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
     private List<Users> users;
+
+    @Override
+    public String toString() {
+        return name;
+    }
 }

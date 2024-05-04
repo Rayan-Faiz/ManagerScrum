@@ -1,8 +1,12 @@
 package com.iir4.managerscrum4iir.UserStory;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "user_stories")
 public class UserStory {
 

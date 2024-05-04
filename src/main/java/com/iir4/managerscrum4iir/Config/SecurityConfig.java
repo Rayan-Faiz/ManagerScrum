@@ -40,6 +40,7 @@ public class SecurityConfig extends WebSecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize)->{
                     authorize.requestMatchers("/api/users/**").permitAll();
+                    authorize.requestMatchers("/dashboard/**").permitAll();
                     authorize.requestMatchers("/dashboard/scrum-master-dashboard").hasRole("Master");
                     authorize.requestMatchers("/dashboard/member-dashboard").hasRole("Member");
                     authorize.anyRequest().authenticated();

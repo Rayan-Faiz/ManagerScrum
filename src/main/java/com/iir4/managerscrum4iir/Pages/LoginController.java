@@ -35,9 +35,9 @@ public class LoginController {
 
             for (Roles role : user.getRoles()) {
                 if (role.getName().equals("Member")) {
-                    return "member-dashboard";
+                    return "redirect:/dashboard/member-dashboard";
                 } else if (role.getName().equals("Master")) {
-                    return "scrum-master-dashboard";
+                    return "redirect:/dashboard/scrum-master-dashboard";
                 }
             }
             return "register";

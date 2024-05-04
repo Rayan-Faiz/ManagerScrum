@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static jakarta.persistence.FetchType.EAGER;
 
 @Entity
 @Getter
@@ -36,7 +35,6 @@ public class Users implements UserDetails, Principal {
     private String name;
     @Column(name = "password", nullable = false)
     private String password;
-    @Getter
     @Column(name="roles")
     @ManyToMany
     private List<Roles> roles;
