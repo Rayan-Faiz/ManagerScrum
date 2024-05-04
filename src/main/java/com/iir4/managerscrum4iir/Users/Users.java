@@ -12,11 +12,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static jakarta.persistence.FetchType.EAGER;
@@ -47,7 +45,7 @@ public class Users implements UserDetails, Principal {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles
                 .stream()
-                .map(r -> new SimpleGrantedAuthority(r.getName()))
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                 .collect(Collectors.toList());
     }
 

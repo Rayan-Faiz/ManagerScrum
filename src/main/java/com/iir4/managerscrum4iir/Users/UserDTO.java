@@ -15,8 +15,6 @@ public class UserDTO {
     private String password;
     private List<Roles> roles;
 
-    // Constructors, getters, and setters
-
     public UserDTO() {
     }
 

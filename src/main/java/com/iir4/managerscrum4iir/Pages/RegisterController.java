@@ -35,10 +35,7 @@ public class RegisterController {
     public String register(UserDTO registerRequest, RedirectAttributes redirectAttributes) {
         Users user = new Users();
 
-        if (registerRequest.getPassword() == null || registerRequest.getPassword().length() < 8) {
-            redirectAttributes.addFlashAttribute("message", "Password should be at least 8 characters");
-            return "register";
-        } else if (usersRepository.findByEmail(registerRequest.getEmail()) != null) {
+        if (usersRepository.findByEmail(registerRequest.getEmail()) != null) {
             redirectAttributes.addFlashAttribute("message", "Email address already in use");
             return "register";
         }

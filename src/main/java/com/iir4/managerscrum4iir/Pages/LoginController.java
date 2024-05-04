@@ -35,12 +35,12 @@ public class LoginController {
 
             for (Roles role : user.getRoles()) {
                 if (role.getName().equals("Member")) {
-                    return "redirect:/dashboard/member-dashboard";
+                    return "member-dashboard";
                 } else if (role.getName().equals("Master")) {
-                    return "redirect:/dashboard/scrum-master-dashboard";
+                    return "scrum-master-dashboard";
                 }
             }
-            return "redirect:/register";
+            return "register";
         } else {
             model.addAttribute("error", "Invalid email or password");
             return "error";
