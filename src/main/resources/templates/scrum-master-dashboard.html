@@ -48,12 +48,12 @@
                     <td th:text="${userStory.description}"></td>
                     <td>
                         <button class="btn btn-primary edit-user-story-btn"
-                                data-id="${userStory.id}"
-                                data-title="${userStory.title}"
-                                data-description="${userStory.description}"
+                                th:attr="data-id=${userStory.id},
+                                data-title=${userStory.title},
+                                data-description=${userStory.description}"
                                 data-toggle="modal"
                                 data-target="#userStoryModal">Edit</button>
-                        <button class="btn btn-danger">Delete</button>
+                        <button class="btn btn-danger delete-userstory-btn" th:attr="data-userstory-id=${userStory.id}">Delete</button>
                     </td>
                 </tr>
                 </tbody>
@@ -93,14 +93,13 @@
                                 data-name="${sprint.name}"
                                 data-start-date="${#dates.format(sprint.startDate, 'dd/MM/yyyy')}"
                                 data-end-date="${#dates.format(sprint.endDate, 'dd/MM/yyyy')}">Edit</button>
-                        <button class="btn btn-danger">Delete</button>
+                        <button class="btn btn-danger delete-sprint-btn" th:attr="data-sprint-id=${sprint.id}">Delete</button>
                     </td>
                 </tr>
                 </tbody>
             </table>
             <button class="btn btn-success" data-toggle="modal" data-target="#sprintModal">Add Sprint</button>
         </div>
-
 
         <!-- Users Tab -->
         <div class="tab-pane fade" id="users" role="tabpanel" aria-labelledby="users-tab">
@@ -114,13 +113,12 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tbody>
                 <tr th:each="user : ${users}">
-                    <td th:text="${user.getId()}"></td>
+                    <td th:text="${user.id}"></td>
                     <td th:text="${user.name}"></td>
                     <td th:text="${user.roles}"></td>
                     <td>
-                        <button class="btn btn-danger delete-user-btn" data-user-id="${user.id}">Delete</button>
+                        <button class="btn btn-danger delete-user-btn" th:attr="data-user-id=${user.id}">Delete</button>
                     </td>
                 </tr>
                 </tbody>
@@ -128,6 +126,7 @@
         </div>
     </div>
 </div>
+
 <!-- JavaScript for deleting users -->
 <script th:inline="javascript">
     /*<![CDATA[*/
@@ -150,6 +149,34 @@
                 },
                 error: function () {
                     alert('Failed to delete user.');
+                }
+            });
+        }
+    });
+    /*]]>*/
+</script>
+<!-- JavaScript for deleting sprints -->
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    $(document).ready(function () {
+        $('.delete-sprint-btn').click(function () {
+            var sprintId = $(this).data('sprint-id');
+            if (confirm('Are you sure you want to delete this sprint?')) {
+                deleteSprint(sprintId);
+            }
+        });
+
+        function deleteSprint(sprintId) {
+            $.ajax({
+                url: '/sprints/' + sprintId + '/delete',
+                type: 'DELETE',
+                success: function (data) {
+                    // Remove the corresponding row from the table
+                    $('tr[data-sprint-id="' + sprintId + '"]').remove();
+                    alert('Sprint deleted successfully!');
+                },
+                error: function () {
+                    alert('Failed to delete sprint.');
                 }
             });
         }
@@ -187,11 +214,39 @@
         </div>
     </div>
 </div>
+<!-- userStory script -->
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
+        // Flag to indicate whether the modal is for editing or adding
+        var isEditing = false;
+
+        // Handles delete
+        $('.delete-userstory-btn').click(function () {
+            var userstoryId = $(this).data('userstory-id');
+            if (confirm('Are you sure you want to delete this user story?')) {
+                deleteUserStory(userstoryId);
+            }
+        });
+
+        function deleteUserStory(userstoryId) {
+            $.ajax({
+                url: '/userStory/' + userstoryId + '/delete',
+                type: 'DELETE',
+                success: function (data) {
+                    // Remove the corresponding row from the table
+                    $('tr[data-userstory-id="' + userstoryId + '"]').remove();
+                    alert('User story deleted successfully!');
+                },
+                error: function () {
+                    alert('Failed to delete user story.');
+                }
+            });
+        }
+
         // Handle click event on Edit button for user stories
         $('.edit-user-story-btn').click(function () {
+            isEditing = true; // Set flag to true for editing
             var id = $(this).data('id');
             // Make AJAX request to fetch user story data
             $.get('/userStory/' + id + '/edit', function(data) {
@@ -203,9 +258,70 @@
                 $('#userStoryModal').modal('show');
             });
         });
+
+        // Handle click event on "Add User Story" button
+        $('#addUserStoryBtn').click(function () {
+            isEditing = false; // Set flag to false for adding
+            // Clear form fields
+            $('#userStoryId').val('');
+            $('#userStoryTitle').val('');
+            $('#userStoryDescription').val('');
+            // Show the modal
+            $('#userStoryModal').modal('show');
+        });
+
+        // Handle click event on Save button in the modal
+        $('#saveUserStoryBtn').click(function () {
+            // Get the data from the form
+            var userStoryId = $('#userStoryId').val();
+            var userStoryTitle = $('#userStoryTitle').val();
+            var userStoryDescription = $('#userStoryDescription').val();
+
+            if (isEditing) {
+                // Make AJAX request to update user story data
+                $.ajax({
+                    url: '/userStory/' + userStoryId + '/update',
+                    type: 'PUT',
+                    data: {
+                        id: userStoryId,
+                        title: userStoryTitle,
+                        description: userStoryDescription
+                    },
+                    success: function (data) {
+                        // Close the modal
+                        $('#userStoryModal').modal('hide');
+                        // Optionally, update the corresponding row in the table if needed
+                        alert('User story updated successfully!');
+                    },
+                    error: function () {
+                        alert('Failed to update user story.');
+                    }
+                });
+            } else {
+                // Make AJAX request to add new user story
+                $.ajax({
+                    url: '/userStory/add',
+                    type: 'POST',
+                    data: {
+                        title: userStoryTitle,
+                        description: userStoryDescription
+                    },
+                    success: function (data) {
+                        // Close the modal
+                        $('#userStoryModal').modal('hide');
+                        // Optionally, update the table with the newly added user story if needed
+                        alert('User story added successfully!');
+                    },
+                    error: function () {
+                        alert('Failed to add user story.');
+                    }
+                });
+            }
+        });
     });
     /*]]>*/
 </script>
+
 
 <!-- Sprint Modal -->
 <div class="modal fade" id="sprintModal" tabindex="-1" role="dialog" aria-labelledby="addSprintModalLabel" aria-hidden="true">

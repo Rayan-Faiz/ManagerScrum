@@ -1,11 +1,10 @@
 package com.iir4.managerscrum4iir.UserStory;
 
+import com.iir4.managerscrum4iir.Users.Users;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -13,6 +12,16 @@ public class UserStoryController {
 
     @Autowired
     private UserStoryRepository userStoryRepository;
+
+    @GetMapping("/userStory")
+    public List<UserStory> getAllUsers() {
+        return userStoryRepository.findAll();
+    }
+
+    @DeleteMapping("/userStory/{id}/delete")
+    public void deleteUser(@PathVariable Long id) {
+        userStoryRepository.deleteById(id);
+    }
 
     @GetMapping("/userStory/{id}/edit")
     @ResponseBody
