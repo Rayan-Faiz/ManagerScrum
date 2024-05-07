@@ -37,6 +37,7 @@ public class SprintController {
         }
 
         Sprint existingSprint = optionalSprint.get();
+        taskRepository.deleteTasksBySprintId(existingSprint.getId());
 
         existingSprint.setName(sprintWithTasksDTO.getSprint().getName());
         existingSprint.setStartDate(sprintWithTasksDTO.getSprint().getStartDate());
