@@ -3,15 +3,13 @@ package com.iir4.managerscrum4iir.Sprint;
 import com.iir4.managerscrum4iir.Task.Task;
 import com.iir4.managerscrum4iir.Task.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
+@RequestMapping("/sprints")
 public class SprintController {
 
     @Autowired
@@ -19,21 +17,44 @@ public class SprintController {
     @Autowired
     private TaskRepository taskRepository;
 
-    @GetMapping("/sprint")
-    public List<Sprint> getAllSprints() {
-        return sprintRepository.findAll();
+    @PostMapping("/add")
+    public Sprint addSprintWithTasks(@RequestBody SprintWithTasksDTO sprintWithTasksDTO) {
+        Sprint sprint = sprintWithTasksDTO.getSprint();
+        Sprint savedSprint = sprintRepository.save(sprint);
+
+        List<Task> tasks = sprintWithTasksDTO.getTasks();
+        tasks.forEach(task -> task.setSprint(savedSprint));
+        taskRepository.saveAll(tasks);
+
+        return savedSprint;
     }
 
-    @DeleteMapping("/sprint/{id}/delete")
+    @PutMapping("/{id}/update")
+    public Sprint updateSprint(@PathVariable Long id, @RequestBody SprintWithTasksDTO sprintWithTasksDTO) {
+        Optional<Sprint> optionalSprint = sprintRepository.findById(id);
+        if (optionalSprint.isEmpty()) {
+            return null;
+        }
+
+        Sprint existingSprint = optionalSprint.get();
+
+        existingSprint.setName(sprintWithTasksDTO.getSprint().getName());
+        existingSprint.setStartDate(sprintWithTasksDTO.getSprint().getStartDate());
+        existingSprint.setEndDate(sprintWithTasksDTO.getSprint().getEndDate());
+
+        existingSprint.getTasks().clear();
+
+        for (Task task : sprintWithTasksDTO.getTasks()) {
+            task.setSprint(existingSprint);
+            taskRepository.save(task);
+        }
+
+        return sprintRepository.save(existingSprint);
+    }
+
+
+    @DeleteMapping("/{id}/delete")
     public void deleteSprint(@PathVariable Long id) {
-        Sprint sprint = sprintRepository.findById(id)
-                .orElseThrow(ResourceNotFoundException::new);
-
-        List<Task> tasks = taskRepository.findBySprintId(id);
-
-        taskRepository.deleteAll(tasks);
-
-        sprintRepository.delete(sprint);
+        sprintRepository.deleteById(id);
     }
 }
-

@@ -89,10 +89,10 @@
                     </td>
                     <td>
                         <button class="btn btn-primary edit-sprint-btn"
-                                data-id="${sprint.id}"
-                                data-name="${sprint.name}"
-                                data-start-date="${#dates.format(sprint.startDate, 'dd/MM/yyyy')}"
-                                data-end-date="${#dates.format(sprint.endDate, 'dd/MM/yyyy')}">Edit</button>
+                                th:attr="data-sprint-id=${sprint.id},
+                                data-name=${sprint.name},
+                                data-start-date=${#dates.format(sprint.startDate, 'dd/MM/yyyy')},
+                                data-end-date=${#dates.format(sprint.endDate, 'dd/MM/yyyy')}">Edit</button>
                         <button class="btn btn-danger delete-sprint-btn" th:attr="data-sprint-id=${sprint.id}">Delete</button>
                     </td>
                 </tr>
@@ -146,37 +146,10 @@
                     // Remove the corresponding row from the table
                     $('tr[data-user-id="' + userId + '"]').remove();
                     alert('User deleted successfully!');
+                    location.reload();
                 },
                 error: function () {
                     alert('Failed to delete user.');
-                }
-            });
-        }
-    });
-    /*]]>*/
-</script>
-<!-- JavaScript for deleting sprints -->
-<script th:inline="javascript">
-    /*<![CDATA[*/
-    $(document).ready(function () {
-        $('.delete-sprint-btn').click(function () {
-            var sprintId = $(this).data('sprint-id');
-            if (confirm('Are you sure you want to delete this sprint?')) {
-                deleteSprint(sprintId);
-            }
-        });
-
-        function deleteSprint(sprintId) {
-            $.ajax({
-                url: '/sprints/' + sprintId + '/delete',
-                type: 'DELETE',
-                success: function (data) {
-                    // Remove the corresponding row from the table
-                    $('tr[data-sprint-id="' + sprintId + '"]').remove();
-                    alert('Sprint deleted successfully!');
-                },
-                error: function () {
-                    alert('Failed to delete sprint.');
                 }
             });
         }
@@ -196,14 +169,14 @@
             </div>
             <div class="modal-body">
                 <form id="userStoryForm">
-                    <input type="hidden" id="userStoryId" name="id">
+                    <input type="hidden" id="userStoryIdModal" name="id">
                     <div class="form-group">
-                        <label for="userStoryTitle">Title</label>
-                        <input type="text" class="form-control" id="userStoryTitle" name="title">
+                        <label for="userStoryTitleModal">Title</label>
+                        <input type="text" class="form-control" id="userStoryTitleModal" name="title">
                     </div>
                     <div class="form-group">
-                        <label for="userStoryDescription">Description</label>
-                        <textarea class="form-control" id="userStoryDescription" name="description"></textarea>
+                        <label for="userStoryDescriptionModal">Description</label>
+                        <textarea class="form-control" id="userStoryDescriptionModal" name="description"></textarea>
                     </div>
                 </form>
             </div>
@@ -218,7 +191,6 @@
 <script th:inline="javascript">
     /*<![CDATA[*/
     $(document).ready(function () {
-        // Flag to indicate whether the modal is for editing or adding
         var isEditing = false;
 
         // Handles delete
@@ -237,6 +209,7 @@
                     // Remove the corresponding row from the table
                     $('tr[data-userstory-id="' + userstoryId + '"]').remove();
                     alert('User story deleted successfully!');
+                    location.reload();
                 },
                 error: function () {
                     alert('Failed to delete user story.');
@@ -246,14 +219,13 @@
 
         // Handle click event on Edit button for user stories
         $('.edit-user-story-btn').click(function () {
-            isEditing = true; // Set flag to true for editing
+            isEditing = true;
             var id = $(this).data('id');
-            // Make AJAX request to fetch user story data
-            $.get('/userStory/' + id + '/edit', function(data) {
+            $.get('/userStory/' + id + '/select', function(data) {
                 // Populate modal with fetched data
-                $('#userStoryId').val(data.id);
-                $('#userStoryTitle').val(data.title);
-                $('#userStoryDescription').val(data.description);
+                $('#userStoryIdModal').val(data.id);
+                $('#userStoryTitleModal').val(data.title);
+                $('#userStoryDescriptionModal').val(data.description);
                 // Show the modal
                 $('#userStoryModal').modal('show');
             });
@@ -261,11 +233,11 @@
 
         // Handle click event on "Add User Story" button
         $('#addUserStoryBtn').click(function () {
-            isEditing = false; // Set flag to false for adding
+            isEditing = false;
             // Clear form fields
-            $('#userStoryId').val('');
-            $('#userStoryTitle').val('');
-            $('#userStoryDescription').val('');
+            $('#userStoryIdModal').val('');
+            $('#userStoryTitleModal').val('');
+            $('#userStoryDescriptionModal').val('');
             // Show the modal
             $('#userStoryModal').modal('show');
         });
@@ -273,44 +245,42 @@
         // Handle click event on Save button in the modal
         $('#saveUserStoryBtn').click(function () {
             // Get the data from the form
-            var userStoryId = $('#userStoryId').val();
-            var userStoryTitle = $('#userStoryTitle').val();
-            var userStoryDescription = $('#userStoryDescription').val();
+            var userStoryId = $('#userStoryIdModal').val();
+            var userStoryTitle = $('#userStoryTitleModal').val();
+            var userStoryDescription = $('#userStoryDescriptionModal').val();
 
             if (isEditing) {
-                // Make AJAX request to update user story data
                 $.ajax({
                     url: '/userStory/' + userStoryId + '/update',
                     type: 'PUT',
-                    data: {
+                    contentType: 'application/json',
+                    data: JSON.stringify({
                         id: userStoryId,
                         title: userStoryTitle,
                         description: userStoryDescription
-                    },
+                    }),
                     success: function (data) {
-                        // Close the modal
                         $('#userStoryModal').modal('hide');
-                        // Optionally, update the corresponding row in the table if needed
                         alert('User story updated successfully!');
+                        location.reload();
                     },
                     error: function () {
                         alert('Failed to update user story.');
                     }
                 });
             } else {
-                // Make AJAX request to add new user story
                 $.ajax({
                     url: '/userStory/add',
                     type: 'POST',
-                    data: {
+                    contentType: 'application/json',
+                    data: JSON.stringify({
                         title: userStoryTitle,
                         description: userStoryDescription
-                    },
+                    }),
                     success: function (data) {
-                        // Close the modal
                         $('#userStoryModal').modal('hide');
-                        // Optionally, update the table with the newly added user story if needed
                         alert('User story added successfully!');
+                        location.reload();
                     },
                     error: function () {
                         alert('Failed to add user story.');
@@ -328,24 +298,25 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addSprintModalLabel">Add Sprint</h5>
+                <h5 class="modal-title" id="sprintModalLabel">Save Sprint</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form id="addSprintForm" action="/sprints/add" method="post">
+            <form id="saveSprintForm">
                 <div class="modal-body">
+                    <input type="hidden" id="sprintIdModal" name="id">
                     <div class="form-group">
-                        <label for="sprintName">Name</label>
-                        <input type="text" class="form-control" id="sprintName" name="name" required>
+                        <label for="sprintNameModal">Name</label>
+                        <input type="text" class="form-control" id="sprintNameModal" name="name" required>
                     </div>
                     <div class="form-group">
-                        <label for="startDate">Start Date</label>
-                        <input type="date" class="form-control" id="startDate" name="startDate" required>
+                        <label for="startDateModal">Start Date</label>
+                        <input type="date" class="form-control" id="startDateModal" name="startDateModal" required>
                     </div>
                     <div class="form-group">
-                        <label for="endDate">End Date</label>
-                        <input type="date" class="form-control" id="endDate" name="endDate" required>
+                        <label for="endDateModal">End Date</label>
+                        <input type="date" class="form-control" id="endDateModal" name="endDateModal" required>
                     </div>
                     <div class="form-group" id="tasksContainer">
                         <label>Tasks</label>
@@ -355,11 +326,11 @@
                             <button type="button" class="btn btn-sm btn-danger remove-task">Remove</button>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-sm btn-primary" id="addTask">Add Task</button>
+                    <button type="button" class="btn btn-sm btn-primary" id="addTask">Add A Task</button>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary">Add Sprint</button>
+                    <button type="submit" class="btn btn-primary" id="saveSprintBtn">Save Sprint</button>
                 </div>
             </form>
         </div>
@@ -367,37 +338,148 @@
 </div>
 <script th:inline="javascript">
     /*<![CDATA[*/
-    // Edit button click event listener for sprints
-    $('.edit-sprint-btn').click(function() {
-        var id = $(this).data('id');
-        var name = $(this).data('name');
-        var startDate = $(this).data('start-date');
-        var endDate = $(this).data('end-date');
-
-        // Populate modal fields with data from the row
-        $('#editSprintId').val(id);
-        $('#editSprintName').val(name);
-        $('#editSprintStartDate').val(startDate);
-        $('#editSprintEndDate').val(endDate);
-
-        // Show the modal
-        $('#editSprintModal').modal('show');
-    });
-
     $(document).ready(function () {
-        // Add task input field
+        var isEditing = false;
+
+        // Handle click event on Edit button for sprints
+        $('.edit-sprint-btn').click(function () {
+            isEditing = true;
+            var sprintId = $(this).data('sprint-id');
+            var name = $(this).data('name');
+            var startDate = $(this).data('start-date');
+            var endDate = $(this).data('end-date');
+            var tasks = $(this).closest('tr').find('ul li');
+
+            // Convert date from 'dd/MM/yyyy' to 'YYYY-MM-DD' format
+            function formatDate(dateString) {
+                var parts = dateString.split('/');
+                var formattedDate = parts[2] + '-' + parts[1] + '-' + parts[0];
+                return formattedDate;
+            }
+
+            var formattedStartDate = formatDate(startDate);
+            var formattedEndDate = formatDate(endDate);
+
+            // Populate modal fields with data from the row
+            $('#sprintIdModal').val(sprintId);
+            $('#sprintNameModal').val(name);
+            $('#startDateModal').val(formattedStartDate);
+            $('#endDateModal').val(formattedEndDate);
+
+            // Populate tasks in the modal
+            $('#tasksContainer').empty();
+            tasks.each(function(index) {
+                var taskName = $(this).find('strong').text();
+                var taskDescription = $(this).find('span').text();
+                var taskInput = '<div class="task-input"><input type="text" class="form-control task-name" name="taskNames[]" value="' + taskName + '" required><input type="text" class="form-control task-description" name="taskDescriptions[]" value="' + taskDescription + '" required><button type="button" class="btn btn-sm btn-danger remove-task">Remove</button></div>';
+                $('#tasksContainer').append(taskInput);
+            });
+
+            // Show the modal
+            $('#sprintModal').modal('show');
+        });
+
+        // Handle click event on "Add Sprint" button
+        $('#addSprintBtn').click(function () {
+            isEditing = false;
+            // Clear form fields
+            $('#sprintIdModal').val('');
+            $('#sprintNameModal').val('');
+            $('#startDateModal').val('');
+            $('#endDateModal').val('');
+            // Clear tasks
+            $('#tasksContainer').empty();
+            // Show the modal
+            $('#sprintModal').modal('show');
+        });
+
+        // Handle form submission
+        $("#saveSprintForm").submit(function (event) {
+            event.preventDefault();
+
+            // Create data object
+            var sprintData = {
+                sprint: {
+                    id: $("#sprintIdModal").val(),
+                    name: $("#sprintNameModal").val(),
+                    startDate: $("#startDateModal").val(),
+                    endDate: $("#endDateModal").val()
+                },
+                tasks: []
+            };
+
+            // Collect task data
+            $(".task-input").each(function () {
+                var taskName = $(this).find(".task-name").val();
+                var taskDescription = $(this).find(".task-description").val();
+                sprintData.tasks.push({ name: taskName, description: taskDescription });
+            });
+
+            // Make AJAX request
+            var url;
+            var type;
+            if (isEditing) {
+                url = '/sprints/' + $("#sprintIdModal").val() + '/update';
+                type = 'PUT';
+            } else {
+                url = '/sprints/add';
+                type = 'POST';
+            }
+
+            $.ajax({
+                url: url,
+                type: type,
+                contentType: 'application/json',
+                data: JSON.stringify(sprintData),
+                success: function (data) {
+                    alert(isEditing ? 'Sprint updated successfully!' : 'Sprint added successfully!');
+                    $('#sprintModal').modal('hide');
+                    location.reload();
+                },
+                error: function () {
+                    alert(isEditing ? 'Failed to update sprint.' : 'Failed to add sprint.');
+                }
+            });
+        });
+
+        // Handle click event on "Add task" button
         $("#addTask").click(function () {
             var taskInput = '<div class="task-input"><input type="text" class="form-control task-name" name="taskNames[]" placeholder="Task Name" required><input type="text" class="form-control task-description" name="taskDescriptions[]" placeholder="Task Description" required><button type="button" class="btn btn-sm btn-danger remove-task">Remove</button></div>';
             $("#tasksContainer").append(taskInput);
         });
 
-        // Remove task input field
+        // Handle remove task button click event
         $(document).on("click", ".remove-task", function () {
             $(this).closest(".task-input").remove();
         });
+
+        // Handle delete
+        $('.delete-sprint-btn').click(function () {
+            var sprintId = $(this).data('sprint-id');
+            if (confirm('Are you sure you want to delete this sprint and all associated tasks?')) {
+                deleteSprint(sprintId);
+            }
+        });
+
+        function deleteSprint(sprintId) {
+            $.ajax({
+                url: '/sprints/' + sprintId + '/delete',
+                type: 'DELETE',
+                success: function (data) {
+                    // Remove the corresponding row from the table
+                    $('tr[data-sprint-id="' + sprintId + '"]').remove();
+                    alert('Sprint deleted successfully!');
+                    location.reload();
+                },
+                error: function () {
+                    alert('Failed to delete sprint.');
+                }
+            });
+        }
     });
     /*]]>*/
 </script>
+
 
 <!-- JavaScript for tab switching -->
 <script th:inline="javascript">

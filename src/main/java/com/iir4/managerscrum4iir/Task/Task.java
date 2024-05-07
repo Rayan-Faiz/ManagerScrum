@@ -1,5 +1,6 @@
 package com.iir4.managerscrum4iir.Task;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.iir4.managerscrum4iir.Sprint.Sprint;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class Task {
     private String description;
 
     @ManyToOne
+    @JsonIgnore
     @JoinColumn(name = "sprint_id")
     private Sprint sprint;
 }
