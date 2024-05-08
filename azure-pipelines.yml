@@ -21,9 +21,7 @@ steps:
   inputs:
     versionSpec: '17'
     jdkArchitectureOption: 'x64'
-    jdkSourceOption: 'AzureStorage'
-    azureCommonVirtualFile: '/bin/Java/'
-    cleanDestinationDirectory: true
+    jdkSourceOption: 'PreInstalled'
 - task: Maven@4
   inputs:
     mavenPomFile: 'pom.xml'
