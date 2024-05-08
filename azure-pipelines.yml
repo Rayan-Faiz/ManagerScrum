@@ -17,3 +17,32 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+- task: JavaToolInstaller@0
+  inputs:
+    versionSpec: '17'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'AzureStorage'
+    azureCommonVirtualFile: '/bin/Java/'
+    cleanDestinationDirectory: true
+- task: Maven@4
+  inputs:
+    mavenPomFile: 'pom.xml'
+    publishJUnitResults: true
+    testResultsFiles: '**/surefire-reports/TEST-*.xml'
+    javaHomeOption: 'JDKVersion'
+    mavenVersionOption: 'Default'
+    mavenAuthenticateFeed: false
+    effectivePomSkip: false
+    sonarQubeRunAnalysis: false
+- task: AzureSpringCloud@0
+  inputs:
+    Action: 'Deploy'
+    AppName: 
+    UseStagingDeployment: true
+    RuntimeVersion: 'Java_17'
+- task: MysqlDeploymentOnMachineGroup@1
+  inputs:
+    TaskNameSelector: 'SqlTaskFile'
+    ServerName: 'localhost'
+    SqlUsername: 'root'
+    SqlPassword: 'root'
