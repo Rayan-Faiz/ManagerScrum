@@ -21,7 +21,7 @@ import java.util.List;
 
 
 @Controller
-@RequestMapping("/api/users")
+@RequestMapping("/ManagerScrum/users")
 public class RegisterController {
 
     @Autowired

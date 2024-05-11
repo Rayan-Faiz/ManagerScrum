@@ -39,6 +39,9 @@ public class Users implements UserDetails, Principal {
     @ManyToMany
     private List<Roles> roles;
 
+    public Users(long l, String john) {
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles

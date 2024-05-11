@@ -12,6 +12,11 @@
 </head>
 <body>
 <div class="container mt-5">
+    <!-- Toggle button -->
+    <div class="custom-control custom-switch float-right mb-3">
+        <input type="checkbox" class="custom-control-input" id="autoNotificationToggle">
+        <label class="custom-control-label" for="autoNotificationToggle">Auto Notifications</label>
+    </div>
     <h2>Welcome to the Scrum Master Dashboard</h2>
     <p>This is where Scrum Masters can manage tasks, sprints, and users.</p>
 
@@ -491,6 +496,23 @@
         });
     });
     /*]]>*/
+</script>
+<!-- JavaScript for toggle button -->
+<script>
+    $(document).ready(function() {
+        // Handler for toggle button change event
+        $('#autoNotificationToggle').change(function() {
+            var checked = $(this).prop('checked');
+            // Make AJAX call to toggle auto-notification
+            $.post('/notifications/toggleAutoNotification', { enabled: checked })
+                .done(function(data) {
+                    alert(data); // Display success message
+                })
+                .fail(function() {
+                    alert('Failed to toggle auto-notification.'); // Display error message
+                });
+        });
+    });
 </script>
 </body>
 </html>

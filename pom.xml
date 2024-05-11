@@ -8,11 +8,11 @@
         <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.IIR4</groupId>
-    <artifactId>ManagerScrum4IIR</artifactId>
+    <groupId>com.iiir4</groupId>
+    <artifactId>managerscrum4iir</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>ManagerScrum4IIR</name>
-    <description>ManagerScrum4IIR</description>
+    <name>managerscrum4iir</name>
+    <description>managerscrum4iir</description>
     <properties>
         <java.version>17</java.version>
     </properties>
@@ -74,6 +74,11 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.28</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -106,7 +111,7 @@
                     <repository>spring-boot-starter-parent</repository>
                     <tag>2.1</tag>
                     <buildArgs>
-                        <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                        <JAR_FILE>ManagerScrum.jar</JAR_FILE>
                     </buildArgs>
                 </configuration>
             </plugin>

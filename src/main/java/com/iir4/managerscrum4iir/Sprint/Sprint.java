@@ -30,5 +30,11 @@ public class Sprint {
 
     @OneToMany(mappedBy = "sprint", cascade = CascadeType.ALL)
     private Set<Task> tasks = new HashSet<>();
+
+    public Sprint(String updatedSprint, Date date, Date date1) {
+    }
+
+    public Sprint() {
+    }
 }
 

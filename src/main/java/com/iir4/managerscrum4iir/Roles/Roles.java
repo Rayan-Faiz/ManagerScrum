@@ -28,6 +28,9 @@ public class Roles {
     @JsonIgnore
     private List<Users> users;
 
+    public Roles(long l, String name) {
+    }
+
     @Override
     public String toString() {
         return name;
