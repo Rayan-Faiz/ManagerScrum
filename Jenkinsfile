@@ -1,8 +1,9 @@
 pipeline {
     agent{
         docker{
-            image "maven"
-            label "docker"
+            image 'maven:latest'
+            args '-v /path/to/host/m2/repository:/root/.m2/repository'
+            label 'docker'
         }
     }
     stages {
