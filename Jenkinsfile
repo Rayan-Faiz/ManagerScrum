@@ -4,16 +4,19 @@ pipeline {
     stages {
         stage('Build') {
             steps {
+                tool 'Maven'
                 sh 'mvn clean package'
             }
         }
         stage('Test') {
             steps {
+                tool 'Maven'
                 sh 'mvn test'
             }
         }
         stage('Code Quality') {
             steps {
+                tool 'Maven'
                 sh 'mvn checkstyle:checkstyle'
             }
         }
