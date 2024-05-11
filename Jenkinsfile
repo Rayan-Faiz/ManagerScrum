@@ -1,16 +1,18 @@
 pipeline {
-    agent any
+    agent
+        docker{
+            image "maven"
+            label "docker"
+        }
 
     stages {
         stage('Build') {
             steps {
-                tool 'Maven'
                 sh 'mvn clean package'
             }
         }
         stage('Test') {
             steps {
-                tool 'Maven'
                 sh 'mvn test'
             }
             post {
@@ -21,7 +23,6 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                tool 'Maven'
                 sh 'mvn checkstyle:checkstyle'
             }
         }
