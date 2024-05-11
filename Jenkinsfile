@@ -1,15 +1,16 @@
 pipeline {
-    agent{
-        docker{
-            image 'maven:latest'
-            args '-v /path/to/host/m2/repository:/root/.m2/repository'
-            label 'docker'
-        }
+    agent any
+    
+    environment {
+        // Define the Maven installation name
+        MAVEN_HOME = tool 'Maven'
     }
+
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                // Use the installed Maven version to execute Maven commands
+                sh "${MAVEN_HOME}/bin/mvn clean package"
             }
         }
         stage('Test') {
