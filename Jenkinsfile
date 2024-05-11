@@ -1,10 +1,10 @@
 pipeline {
-    agent
+    agent{
         docker{
             image "maven"
             label "docker"
         }
-
+    }
     stages {
         stage('Build') {
             steps {
