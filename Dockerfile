@@ -10,7 +10,7 @@ FROM openjdk:17-oracle
 WORKDIR /app
 
 # Copy the compiled JAR file into the container
-COPY target/ManagerScrum4IIR-0.0.1-SNAPSHOT.jar /app/ManagerScrum4IIR-0.0.1-SNAPSHOT.jar
+COPY target/managerscrum4iir-0.0.1-SNAPSHOT.jar /app/managerscrum4iir-0.0.1-SNAPSHOT.jar
 
 # Expose the port your application runs on
 EXPOSE 8080
@@ -21,4 +21,4 @@ ENV SPRING_DATASOURCE_USERNAME=rayan
 ENV SPRING_DATASOURCE_PASSWORD=123
 
 # Command to run the application
-CMD ["java", "-jar", "ManagerScrum4IIR-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "managerscrum4iir-0.0.1-SNAPSHOT.jar"]

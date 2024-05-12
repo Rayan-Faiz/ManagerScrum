@@ -22,6 +22,12 @@ pipeline {
                 sh 'mvn checkstyle:checkstyle'
             }
         }
+        stage('Deploy') {
+            steps {
+                sh 'docker buildx bake'
+                sh 'docker-compose up'
+            }
+        }
     }
 
     post {
