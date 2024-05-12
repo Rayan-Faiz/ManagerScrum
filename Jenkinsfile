@@ -2,9 +2,17 @@ pipeline {
     agent any
     stages {
         stage('Build') {
+            agent {
+                docker {
+                    image 'maven:latest'
+                    // Run the container on the node specified at the
+                    // top-level of the Pipeline, in the same workspace,
+                    // rather than on a new node entirely:
+                    reuseNode true
+                }
+            }
             steps {
-                // Use the installed Maven version to execute Maven commands
-                sh "${MAVEN_HOME}/bin/mvn clean package"
+                sh 'mvn clean package'
             }
         }
         stage('Test') {
