@@ -4,7 +4,7 @@ pipeline {
         stage('Build') {
             steps {
                 git 'https://github.com/Rayan-Faiz/ManagerScrum'
-                sh 'mvn clean'
+                sh 'mvn clean package'
             }
         }
         stage('Test') {
