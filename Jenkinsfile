@@ -1,16 +1,14 @@
 pipeline {
     agent any
-
     stages {
         stage('Build') {
             steps {
-                tool 'Maven'
-                sh 'mvn clean package'
+                git 'https://github.com/Rayan-Faiz/ManagerScrum'
+                sh 'mvn clean'
             }
         }
         stage('Test') {
             steps {
-                tool 'Maven'
                 sh 'mvn test'
             }
             post {
@@ -21,7 +19,6 @@ pipeline {
         }
         stage('Code Quality') {
             steps {
-                tool 'Maven'
                 sh 'mvn checkstyle:checkstyle'
             }
         }
