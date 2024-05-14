@@ -8,7 +8,7 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-                    sh 'sudo systemctl start docker'
+                    sh 'systemctl start docker'
                 }
             }
         }
