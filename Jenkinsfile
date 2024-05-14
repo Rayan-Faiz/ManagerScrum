@@ -7,7 +7,10 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                sh 'mvn clean package'
+                withDockerRegistry(credentialsId: 'dee53e40-8179-4798-9fbe-b5f5117ab315', toolName: 'docker') {
+                    sh 'mvn clean package'
+                }
+                
             }
         }
         stage('Test') {
@@ -27,8 +30,13 @@ pipeline {
         }
         stage('Deploy') {
             steps {
-                sh 'docker buildx bake'
-                sh 'docker-compose up'
+                script{
+                    withDockerRegistry(credentialsId: 'dee53e40-8179-4798-9fbe-b5f5117ab315', toolName: 'docker') {
+                        sh 'docker build -t managerscrum .'
+                        sh 'docker-compose up'
+                    }
+                }
+                
             }
         }
     }
