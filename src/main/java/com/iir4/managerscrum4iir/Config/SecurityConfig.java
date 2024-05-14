@@ -33,15 +33,15 @@ public class SecurityConfig extends WebSecurityConfiguration {
                 .cors(withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorize)->{
-                    authorize.requestMatchers("/ManagerScrum/users/**").permitAll();
+                    authorize.requestMatchers("/ManagerScrum/**").permitAll();
                     authorize.requestMatchers("/dashboard/scrum-master-dashboard").hasAuthority("ROLE_Master");
                     authorize.requestMatchers("/dashboard/member-dashboard").hasAuthority("ROLE_Member");
-                    authorize.requestMatchers("/notifications/**").permitAll();
+                    authorize.requestMatchers("/test").permitAll();
                     authorize.anyRequest().authenticated();
                 })
                 .formLogin(form -> form
-                        .loginPage("/ManagerScrum/users/login")
-                        .loginProcessingUrl("/ManagerScrum/users/login")
+                        .loginPage("/ManagerScrum/login")
+                        .loginProcessingUrl("/ManagerScrum/login")
                         .successHandler(new AuthenticationSuccessHandler() {
                             @Override
                             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
