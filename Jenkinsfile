@@ -5,6 +5,13 @@ pipeline {
         maven 'mvn'
     }
     stages {
+        stage('Preparation') {
+            steps {
+                script {
+                    sh 'sudo systemctl start docker'
+                }
+            }
+        }
         stage('Build') {
             steps {
                 sh 'mvn clean package'
