@@ -6,13 +6,6 @@ pipeline {
         docker 'docker'
     }
     stages {
-        stage('Preparation') {
-            steps {
-                script {
-                    sh 'systemctl start docker'
-                }
-            }
-        }
         stage('Build') {
             steps {
                 sh 'mvn clean package'
