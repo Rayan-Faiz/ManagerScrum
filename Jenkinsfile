@@ -5,12 +5,12 @@ pipeline {
         maven 'mvn'
     }
     stages {
-        //stage('Build') {
-          //  steps {
+        stage('Build') {
+            steps {
                 //withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {}
-                //sh 'mvn clean package'
-           // }
-        //}
+                sh 'mvn clean package'
+            }
+        }
         stage('Test') {
             steps {
                 sh 'mvn test'
