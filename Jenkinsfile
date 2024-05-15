@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withDockerRegistry(credentialsId: 'dee53e40-8179-4798-9fbe-b5f5117ab315', toolName: 'docker') {
+                withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {
                     sh 'mvn clean package'
                 }
                 
@@ -31,7 +31,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script{
-                    withDockerRegistry(credentialsId: 'dee53e40-8179-4798-9fbe-b5f5117ab315', toolName: 'docker') {
+                    withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {
                         sh 'docker build -t managerscrum .'
                         sh 'docker-compose up'
                     }
