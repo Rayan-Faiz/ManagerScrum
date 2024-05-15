@@ -7,10 +7,8 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {
-                    sh 'mvn clean package'
-                }
-                
+                //withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {}
+                sh 'mvn clean package'
             }
         }
         stage('Test') {
@@ -31,16 +29,14 @@ pipeline {
         stage('Deploy') {
             steps {
                 script{
-                    withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {
-                        sh 'docker build -t managerscrum .'
-                        sh 'docker-compose up'
-                    }
+                    //withDockerRegistry(credentialsId: 'a0029d18-f019-497c-b9d5-f305b66caab3', toolName: 'docker') {}
+                    sh 'docker buildx bake'
+                    sh 'docker-compose up'
                 }
                 
             }
         }
     }
-
     post {
         success {
             echo 'CI Pipeline completed successfully!'
