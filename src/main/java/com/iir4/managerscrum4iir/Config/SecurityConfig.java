@@ -36,7 +36,6 @@ public class SecurityConfig extends WebSecurityConfiguration {
                     authorize.requestMatchers("/ManagerScrum/**").permitAll();
                     authorize.requestMatchers("/dashboard/scrum-master-dashboard").hasAuthority("ROLE_Master");
                     authorize.requestMatchers("/dashboard/member-dashboard").hasAuthority("ROLE_Member");
-                    authorize.requestMatchers("/test").permitAll();
                     authorize.anyRequest().authenticated();
                 })
                 .formLogin(form -> form

@@ -18,7 +18,7 @@ import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.Collections;
-
+// to be reviewed
 @Configuration
 @RequiredArgsConstructor
 public class BeansConfig {

@@ -35,10 +35,6 @@ public class RegisterController {
     public String register(UserDTO registerRequest, RedirectAttributes redirectAttributes) {
         Users user = new Users();
 
-        if (usersRepository.findByEmail(registerRequest.getEmail()) != null) {
-            redirectAttributes.addFlashAttribute("message", "Email address already in use");
-            return "register";
-        }
         user.setEmail(registerRequest.getEmail());
         user.setName(registerRequest.getName());
 
